@@ -1,147 +1,172 @@
-import random
+# data.py — Le Gardien du Bestiaire
+# Rôle 3 : Ce fichier instancie tous les objets du jeu (héros, monstres, armes, environnements).
+# Aucun print() ici. Uniquement des données prêtes à l'emploi.
 
-# ============================================
-# CLASSES
-# ============================================
+from models import Hero, Monstre, Environnement
 
-class Creature:
-    def __init__(self, nom, pv, ca, type_degat):
-        self.nom = nom
-        self.pv = pv
-        self.max_pv = pv
-        self.ca = ca
-        self.type_degat = type_degat
-        self.initiative = 0
-        self.etats = []
 
-    def est_vivante(self):
-        return self.pv > 0
+# ============================================================
+# ARMES (utilisées par les Héros)
+# Chaque arme est un dictionnaire : nom, formule de dégâts, type de dégât
+# ============================================================
 
-    def lancer_initiative(self):
-        self.initiative = random.randint(1, 20)
-        return self.initiative
+ARMES = [
+    {"nom": "Épée longue",      "degats": "1d8",  "type_degat": "Tranchant"},
+    {"nom": "Lance de guerre",  "degats": "1d10", "type_degat": "Perçant"},
+    {"nom": "Masse d'armes",    "degats": "1d6",  "type_degat": "Contondant"},
+    {"nom": "Arc court",        "degats": "1d6",  "type_degat": "Perçant"},
+    {"nom": "Hache de bataille","degats": "1d12", "type_degat": "Tranchant"},
+    {"nom": "Dague",            "degats": "1d4",  "type_degat": "Perçant"},
+    {"nom": "Bâton de feu",     "degats": "2d6",  "type_degat": "Feu"},
+    {"nom": "Fouet empoisonné", "degats": "1d6",  "type_degat": "Poison"},
+]
 
-    def recevoir_degats(self, montant, type_attaque=None):
-        self.pv = max(0, self.pv - montant)
-        return montant
 
-class Hero(Creature):
-    def __init__(self, nom, pv, ca, type_degat, arme, histoire, special=None):
-        super().__init__(nom, pv, ca, type_degat)
-        self.arme = arme
-        self.histoire = histoire
-        self.type_special = special
-        self.special_disponible = True
+# ============================================================
+# HÉROS — Figures historiques africaines
+# Hero(nom, pv, ca, type_degat, arme, histoire, special=None)
+# L'arme est assignée au moment de la sélection dans main.py
+# ============================================================
 
-    def invoquer(self):
-        if self.type_special == "invocation" and self.special_disponible:
-            self.special_disponible = False
-            
-            if "Soundiata" in self.nom:
-                return Creature("Lion du Mali", 50, 14, "Tranchant")
-            elif "Abla Pokou" in self.nom:
-                return Creature("Gardien du Fleuve", 60, 16, "Contondant")
-        return None
+def creer_heros():
+    """Retourne la liste de tous les héros disponibles (sans arme assignée)."""
+    return [
+        Hero(
+            nom="Soundiata Keïta",
+            pv=130,
+            ca=16,
+            type_degat="Tranchant",
+            arme=None,
+            histoire="Fondateur de l'Empire du Mali, il se releva de sa paralysie pour libérer son peuple.",
+            special="invocation"  # Peut invoquer le Lion du Mali
+        ),
+        Hero(
+            nom="Abla Pokou",
+            pv=100,
+            ca=13,
+            type_degat="Magique",
+            arme=None,
+            histoire="Reine Baoulé qui sacrifia tout pour sauver son peuple en traversant le fleuve Comoé.",
+            special="invocation"  # Peut invoquer le Gardien du Fleuve
+        ),
+        Hero(
+            nom="Yaa Asantewaa",
+            pv=120,
+            ca=15,
+            type_degat="Tranchant",
+            arme=None,
+            histoire="Reine-mère Ashanti qui mena la résistance contre les colonisateurs britanniques.",
+            special="contextuel"  # Bonus de dégâts contre les ennemis aux PV bas
+        ),
+        Hero(
+            nom="Shaka Zulu",
+            pv=140,
+            ca=17,
+            type_degat="Perçant",
+            arme=None,
+            histoire="Roi Zoulou et stratège militaire de génie, il révolutionna l'art de la guerre.",
+            special="eveil"  # Entre en rage quand ses PV descendent sous 30%
+        ),
+        Hero(
+            nom="Makeda de Saba",
+            pv=110,
+            ca=14,
+            type_degat="Magique",
+            arme=None,
+            histoire="Reine légendaire de Saba, dont la sagesse et la lumière guidaient les peuples.",
+            special=None
+        ),
+    ]
 
-class Monstre(Creature):
-    def __init__(self, nom, pv, ca, type_degat, resistance):
-        super().__init__(nom, pv, ca, type_degat)
-        self.resistance = resistance
 
-    def recevoir_degats(self, montant, type_attaque=None):
-        if type_attaque == self.resistance:
-            montant //= 2
-        return super().recevoir_degats(montant)
+# ============================================================
+# MONSTRES — Adversaires du Bestiaire
+# Monstre(nom, pv, ca, type_degat, resistance)
+# ============================================================
 
-    def mode_eveil(self):
-        if self.pv < (self.max_pv * 0.3):
-            self.ca += 2
-            return True
-        return False
+def creer_monstres():
+    """Retourne la liste de tous les monstres disponibles."""
+    return [
+        Monstre(
+            nom="Hyène Albinos",
+            pv=40,
+            ca=11,
+            type_degat="Perçant",       # Morsure
+            resistance="Poison"          # Immunisée au poison naturellement
+        ),
+        Monstre(
+            nom="Guerrier d'Argile",
+            pv=80,
+            ca=14,
+            type_degat="Contondant",     # Frappe de pierre
+            resistance="Perçant"         # L'argile résiste aux lames
+        ),
+        Monstre(
+            nom="Serpent Géant",
+            pv=60,
+            ca=12,
+            type_degat="Poison",         # Venin
+            resistance="Poison"          # Immunisé à son propre poison
+        ),
+        Monstre(
+            nom="Éléphant de Guerre",
+            pv=200,
+            ca=15,
+            type_degat="Contondant",     # Piétinement
+            resistance="Contondant"      # Peau épaisse
+        ),
+        Monstre(
+            nom="Esprit de la Savane",
+            pv=70,
+            ca=13,
+            type_degat="Magique",        # Malédiction
+            resistance="Tranchant"       # Immatériel, les lames glissent
+        ),
+        Monstre(
+            nom="Crocodile Géant",
+            pv=110,
+            ca=16,
+            type_degat="Perçant",        # Mâchoires
+            resistance="Contondant"      # Cuirasse osseuse
+        ),
+        Monstre(
+            nom="Béhanzin le Tyran",     # Mini-boss
+            pv=180,
+            ca=17,
+            type_degat="Tranchant",      # Lame royale
+            resistance="Feu"             # Insensible aux flammes
+        ),
+        Monstre(
+            nom="GROOTSLANG",            # Boss final — Créature mythique mi-éléphant mi-serpent
+            pv=280,
+            ca=18,
+            type_degat="Poison",         # Venin dévastateur
+            resistance="Magique"         # Résiste à la magie ancienne
+        ),
+    ]
 
-# ============================================
-# DONNÉES 
-# ============================================
 
-# HÉROS (2 existants)
-soundiata = Hero(
-    nom="Soundiata Keïta",
-    pv=120,
-    ca=16,
-    type_degat="Tranchant",
-    arme="Épée Royale",
-    histoire="Fondateur de l'Empire du Mali",
-    special="invocation"
-)
+# ============================================================
+# ENVIRONNEMENTS — Zones de combat
+# Environnement(nom, type_bonus)
+# Le type_bonus peut être utilisé par engine.py pour appliquer des effets
+# ============================================================
 
-abla_pokou = Hero(
-    nom="Abla Pokou",
-    pv=100,
-    ca=15,
-    type_degat="Magique",
-    arme="Bâton Sacré",
-    histoire="Princesse Baoulé qui sacrifia son enfant",
-    special="invocation"
-)
+def creer_environnements():
+    """Retourne la liste des environnements disponibles."""
+    return [
+        Environnement("Forêt des Spectres",   type_bonus="Poison"),    # Les plantes empoisonnent
+        Environnement("Temple de l'Oubli",    type_bonus="Magique"),   # Energie ancienne
+        Environnement("Plaines de la Savane", type_bonus="Tranchant"), # Avantage aux lames
+        Environnement("Marais du Delta",      type_bonus="Contondant"),# Sol lourd
+        Environnement("Antre du Grootslang",  type_bonus="Poison"),    # Repaire empoisonné
+    ]
 
-# ============================================
-# MONSTRES (2 anciens + 3 nouveaux = 5)
-# ============================================
 
-# 1. Mobutu Sese Seko (existant)
-mobutu = Monstre(
-    nom="Mobutu Sese Seko",
-    pv=150,
-    ca=14,
-    type_degat="Contondant",
-    resistance="Percant"
-)
+# ============================================================
+# ACCÈS RAPIDE — Dictionnaires indexés par nom (utile pour main.py)
+# ============================================================
 
-# 2. Soumaoro Kanté (existant)
-soumaoro = Monstre(
-    nom="Soumaoro Kanté",
-    pv=140,
-    ca=16,
-    type_degat="Poison",
-    resistance="Tranchant"
-)
-
-# 3. NOUVEAU : Béhanzin (Roi du Dahomey)
-behanzin = Monstre(
-    nom="Béhanzin",
-    pv=160,
-    ca=15,
-    type_degat="Feu",
-    resistance="Magique"  # Résiste à la magie
-)
-
-# 4. NOUVEAU : Samory Touré (Résistant guinéen)
-samory = Monstre(
-    nom="Samory Touré",
-    pv=145,
-    ca=17,
-    type_degat="Percant",
-    resistance="Contondant"  # Résiste aux dégâts contondants
-)
-
-# 5. NOUVEAU : Shaka Zulu (Guerrier zoulou)
-shaka = Monstre(
-    nom="Shaka Zulu",
-    pv=155,
-    ca=16,
-    type_degat="Tranchant",
-    resistance="Percant"  # Résiste aux attaques perçantes
-)
-
-# ============================================
-# LISTES POUR MAIN.PY
-# ============================================
-
-# Liste des héros (toujours 2)
-heros = [soundiata, abla_pokou]
-
-# Liste des monstres (maintenant 5)
-monstres = [mobutu, soumaoro, behanzin, samory, shaka]
-
-# Optionnel : exporter aussi les classes si nécessaire
-__all__ = ['Creature', 'Hero', 'Monstre', 'heros', 'monstres']
+HEROS_PAR_NOM     = {h.nom: h for h in creer_heros()}
+MONSTRES_PAR_NOM  = {m.nom: m for m in creer_monstres()}
+ARMES_PAR_NOM     = {a["nom"]: a for a in ARMES}
