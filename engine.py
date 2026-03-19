@@ -23,10 +23,12 @@ def d20():
     return random.randint(1, 20)
 
 
-def barre(pv, max_pv, col=G):
+def barre(pv, max_pv):
+    """Dessine une jauge de vie propre et compatible avec tous les terminaux."""
     ratio = max(0, min(1, pv / max_pv))
     blocs = int(ratio * 20)
-    return f"{col}{'█' * blocs}{'░' * (20 - blocs)}{C} {max(0, pv)}/{max_pv} PV"
+    jauge = "[" + "■" * blocs + "-" * (20 - blocs) + "]"
+    return f"{jauge} {int(max(0, pv)):>3}/{int(max_pv):>3} PV"
 
 
 def cine(txt, col=B):
@@ -152,7 +154,26 @@ class Monstre:
         self.type = data["type"]
         self.resistance = data["resistance"]
         self.env = data["env"]
+        
+        # Nouvelles statistiques pour le Maitre du Jeu
+        self.valeur_soin = data.get("soin", 0)
+        self.valeur_buff = data.get("buff_degats", 0)
+        
+        # Etat du buff pendant le combat
+        self.buff_actif = False
 
+    def se_soigner(self):
+        """Permet au monstre de recuperer des points de vie sans depasser son maximum."""
+        soin_effectif = self.valeur_soin
+        self.pv += soin_effectif
+        if self.pv > self.max_pv:
+            self.pv = self.max_pv
+        return soin_effectif
+
+    def activer_buff(self):
+        """Active un bonus de degats qui sera utilise lors de la prochaine attaque."""
+        self.buff_actif = True
+        return self.valeur_buff
 
 
 # Calcul des dégâts
@@ -198,8 +219,8 @@ def attaque_hero(hero, monstre, technique):
 
 
 # Attaque du monstre
-
-def attaque_monstre(hero, monstre):
+def attaque_monstre(cible, monstre):
+    # Note: On appelle le parametre 'cible' car cela peut etre un Hero ou une Invocation
     jet = d20()
     if jet >= monstre.seuil2:
         dmg = monstre.dg2
@@ -208,13 +229,16 @@ def attaque_monstre(hero, monstre):
     else:
         return 0, False
 
-    if hero.invocation:
-        hero.invocation.pv -= dmg
-    else:
-        hero.pv -= dmg
+    # Application du buff du Maitre du Jeu si actif
+    if monstre.buff_actif:
+        dmg += monstre.valeur_buff
+        # Le buff est consomme apres la frappe
+        monstre.buff_actif = False 
+
+    # Application des degats a la cible
+    cible.pv -= dmg
 
     return dmg, True
-
 
 # Invocation
 

@@ -1,4 +1,7 @@
 
+# data.py — Données du jeu
+
+
 # Progression PV et dégâts
 INCREMENTS = [10, 15, 20, 25, 30]
 INCREMENT_DEGATS = 5  
@@ -83,21 +86,12 @@ HEROES = {
         "invocation": INVOCATIONS["Moro Naba"],
     },
 }
-
-# PV Soundjata par niveau (pour cohérence des monstres)
-def pv_soundjata_niveau(n):
-    pv = HEROES["Soundjata"]["pv_base"]
-    for i in range(1, n):
-        if i - 1 < len(INCREMENTS):
-            pv += INCREMENTS[i - 1]
-    return pv
-
-# Monstres avec seuils progressifs
+# Monstres avec stats indépendantes et nouvelles capacités pour le MJ
 MONSTRES = {
     1: {
         "nom": "Mamlambo",
         "niveau": 1,
-        "pv": pv_soundjata_niveau(1) - 20,
+        "pv": 130,
         "dg1": 8,
         "dg2": 25,
         "seuil1": 8,
@@ -105,11 +99,13 @@ MONSTRES = {
         "type": "poison",
         "resistance": "contondant",
         "env": "Marais du Delta",
+        "soin": 15,
+        "buff_degats": 5
     },
     2: {
         "nom": "Asanbosam",
         "niveau": 2,
-        "pv": pv_soundjata_niveau(2) - 20,
+        "pv": 150,
         "dg1": 18,
         "dg2": 35,
         "seuil1": 7,
@@ -117,11 +113,13 @@ MONSTRES = {
         "type": "tranchant",
         "resistance": "poison",
         "env": "Forêt des Spectres",
+        "soin": 20,
+        "buff_degats": 8
     },
     3: {
         "nom": "Popobawa",
         "niveau": 3,
-        "pv": pv_soundjata_niveau(3) - 20,
+        "pv": 180,
         "dg1": 22,
         "dg2": 45,
         "seuil1": 7,
@@ -129,11 +127,13 @@ MONSTRES = {
         "type": "magique",
         "resistance": "magique",
         "env": "Temple de l’Oubli",
+        "soin": 25,
+        "buff_degats": 10
     },
     4: {
         "nom": "Tokoloshe",
         "niveau": 4,
-        "pv": pv_soundjata_niveau(4) - 20,
+        "pv": 220,
         "dg1": 24,
         "dg2": 60,
         "seuil1": 7,
@@ -141,11 +141,13 @@ MONSTRES = {
         "type": "contondant",
         "resistance": "tranchant",
         "env": "Plaines de la Savane",
+        "soin": 30,
+        "buff_degats": 12
     },
     5: {
         "nom": "Seth – Roi des Enfers",
         "niveau": 5,
-        "pv": pv_soundjata_niveau(5) - 20,
+        "pv": 280,
         "dg1": 26,
         "dg2": 65,
         "seuil1": 6,
@@ -153,5 +155,7 @@ MONSTRES = {
         "type": "feu",
         "resistance": "poison",
         "env": "Antre du Grootslang",
+        "soin": 40,
+        "buff_degats": 15
     },
 }

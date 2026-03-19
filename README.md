@@ -1,43 +1,46 @@
-#  Légendes Africaines : L'Épopée (Projet POO)
+# Légendes Africaines : L'Épopée (Projet POO)
 
-Projet Python - EPSI
+**Projet Python - EPSI**
 
-Un système de jeu de combat type RPG (Role Playing Game) en ligne de commande (REPL), développé en Python en utilisant les concepts avancés de la Programmation Orientée Objet (POO). 
-Au lieu d'un univers fantastique classique, ce projet met à l'honneur de grandes figures de l'histoire et de la mythologie africaine.
+Un système de jeu de rôle (RPG) en ligne de commande (REPL), développé en Python en utilisant les concepts avancés de la Programmation Orientée Objet (POO). 
+Ce projet met à l'honneur de grandes figures de l'histoire et de la mythologie africaine à travers un système de combat multijoueur asymétrique (Joueurs contre Maître du Jeu).
 
-# Équipe du Projet
-Ndeye Mbasse Ndiaye: Chef d'Orchestre (Architecture de la boucle principale REPL, Intégration Git, Gestion du projet)
+## Équipe du Projet
+Ndeye Mbasse Ndiaye : Chef d'Orchestre (Architecture multijoueur, Intégration Git, Gestion du projet)
 Marc Lolobgo : Architecte POO (Classes, Héritage, Polymorphisme)
-Emmanuel Loukou : Maître des Mécaniques (Moteur de calculs, Lancers de dés)
-David Sawagado : Créateur de Contenu (Données historiques, Bestiaire, Équilibrage)
-Maimouna Kaba: Designer Console (Interface textuelle, Cinématiques, Menus)
-# Prérequis et Lancement
-Le jeu a été conçu pour tourner de manière fluide dans n'importe quel terminal, sans interface graphique lourde.
+Emmanuel Loukou: Maître des Mécaniques (Moteur de calculs, Lancers de dés, Initiative)
+David sawagado : Créateur de Contenu (Données historiques, Bestiaire, Équilibrage)
+Maimouna Kaba : Designer Console (Interface textuelle, Menus, Affichage dynamique)
 
-Pour lancer le jeu :
-1. Ouvrez votre terminal (ou invite de commande).
-2. Naviguez jusqu'au dossier du projet.
+## Prérequis et Lancement
+Le jeu a été conçu pour s'exécuter de manière fluide dans n'importe quel terminal standard, sans nécessiter d'interface graphique lourde ou de bibliothèques externes.
+
+**Pour lancer le jeu :**
+1. Ouvrez votre terminal ou invite de commande.
+2. Naviguez jusqu'au répertoire racine du projet.
 3. Exécutez le fichier principal avec Python :
    ```bash
    python game.py
-# Architecture du Code (Modularité)
-Pour éviter les conflits de fusion sur Git à 5 personnes et garder un code propre, nous avons séparé la logique en trois fichiers distincts (façon API) :
+Architecture du Code (Modularité)
+Pour garantir la maintenabilité du code et un travail collaboratif efficace sur Git, l'architecture a été divisée en trois modules distincts :
 
-data.py: Stockage des dictionnaires de personnages, de l'arsenal et des environnements (Base de données).
+data.py: Base de données statiques (dictionnaires) contenant les caractéristiques des héros, le bestiaire des monstres et les statistiques d'équipement.
 
-engine.py: Les classes ( Hero, Monstre, Invocation) et le moteur mathématique de résolution des attaques.
+engine.py: Moteur logique contenant les classes POO ( Hero, Monstre, Invocation) et les fonctions mathématiques de résolution de combat.
 
-game.py: L'interface utilisateur, les menus interactifs et la boucle principale du combat (REPL).
+game.py: Interface utilisateur, gestion des menus, boucle de gameplay REPL et gestion de l'état global du champ de bataille.
 
-# Fonctionnalités Supplémentaires (Bonus)
-En plus des consignes de base (Attaque, Héritage, Polymorphisme), notre équipe a intégré les mécaniques avancées suivantes :
+Fonctionnalités Principales et Avancées
+En plus des consignes de base (Héritage, Polymorphisme), notre équipe a développé un véritable moteur de jeu de rôle interactif :
 
-Le Mode Éveil (Transformation) : Lorsqu'un héros tombe en dessous d'un certain seuil critique de points de vie, il peut choisir d'activer son "Éveil", ce qui booste considérablement ses dégâts de base de façon temporaire.
+Multijoueur Asymétrique (Nouveau) : Le jeu permet désormais à plusieurs joueurs de s'allier contre un joueur incarnant le Maître du Jeu (MJ), qui déploie et contrôle les monstres.
 
-L'Avantage Contextuel (Terrain) : Les arènes changent à chaque niveau (ex : Forêt des Spectres ). Si le type d'attaque d'une créature correspond à l'arène, elle reçoit un bonus de dégâts mathématiques.
+Système d'Initiative Dynamique : Au début de chaque affrontement, un jet de dé 20 est effectué pour chaque entité (Héros et Monstres) afin de déterminer un ordre de passage strict.
 
-Le Système d'Invocation : Grâce à la POO, un héros de niveau 3 peut instancier un nouvel objet Invocationen plein combat. Cet objet (ex : le Lion du Mandé ) prend les coups et attaque à la place du héros pendant 3 tours.
+Ciblage Manuel : Fini les attaques aléatoires ; les joueurs et le MJ doivent analyser le champ de bataille et sélectionner précisément la cible de leurs attaques.
 
-Cinématiques et Interface Dynamique : Utilisation de rafraîchissements de console et de pauses ( time.sleep()) pour donner un vrai rythme textuel au combat.
+Actions du Maître du Jeu : Le MJ dispose de capacités tactiques uniques, lui permettant de soigner ses créatures ou d'accumuler des bonus de dégâts (Buffs) au lieu de simplement attaquer.
 
-Progression (Level-Up) : Un système d'enchaînement de 5 niveaux de difficulté croissante avec augmentation des statistiques du héros entre chaque combat.
+Le Mode Éveil : Lorsqu'un héros tombe en dessous d'un seuil critique de points de vie, il peut sacrifier son tour d'attaque pour s'éveiller, altérant drastiquement ses dégâts pour le reste du combat.
+
+Système d'Invocation : Grâce à l'instanciation dynamique d'objets, un héros peut invoquer un allié sur le terrain. L'invocation possède ses propres statistiques et peut recevoir des ordres de ciblage.
