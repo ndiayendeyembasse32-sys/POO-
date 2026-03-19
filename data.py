@@ -7,7 +7,7 @@ INCREMENT_DEGATS = 5
 ENVIRONNEMENTS = {
     "Marais du Delta": {"bonus_type": "contondant"},
     "Forêt des Spectres": {"bonus_type": "poison"},
-    "Temple de l’Oubli": {"bonus_type": "magique"},
+    "emple de l’Oubli": {"bonus_type": "magique"},
     "Plaines de la Savane": {"bonus_type": "tranchant"},
     "Antre du Grootslang": {"bonus_type": "poison"},
 }
