@@ -1,5 +1,3 @@
-# data.py — Données du jeu
-
 
 # Progression PV et dégâts
 INCREMENTS = [10, 15, 20, 25, 30]
