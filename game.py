@@ -1,4 +1,4 @@
-# game.py — Boucle principale
+# game.py — Boucle principale et Interface
 
 import os
 import time
@@ -7,12 +7,53 @@ from engine import (
     attaque_hero, attaque_monstre,
     invoquer, tour_invocation
 )
-from data import MONSTRES
+# On importe HEROES en plus pour pouvoir lire les fiches
+from data import MONSTRES, HEROES 
+
+def afficher_fiches_heros():
+    """Affiche le menu de consultation des fiches de personnages."""
+    while True:
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print(" --- ARCHIVES DES HÉROS ---\n")
+        print("1. Soundjata Keïta")
+        print("2. Abla Pokou")
+        print("3. Moro Naba")
+        print("4. Retour au menu principal\n")
+
+        choix = input("Quel héros veux-tu inspecter ? (1/2/3/4) > ")
+
+        if choix == "4":
+            break
+            
+        cle = None
+        if choix == "1": cle = "Soundjata"
+        elif choix == "2": cle = "Abla Pokou"
+        elif choix == "3": cle = "Moro Naba"
+
+        if cle:
+            h = HEROES[cle]
+            os.system('cls' if os.name == 'nt' else 'clear')
+            print("╔" + "═" * 40 + "╗")
+            print(f"║ {h['nom']:^38} ║")
+            print("╚" + "═" * 40 + "╝")
+            print(f"  Arme       : {h['arme']}")
+            print(f"  PV de base : {h['pv_base']}")
+            print(f"  Type       : {h['type'].capitalize()}")
+            print(f"  Affinité   : {h['affinite']}")
+            
+            print("\n Techniques de combat :")
+            for t in h['techniques']:
+                print(f"  - {t['nom']:<20} (Dégâts base: {t['base']}, Seuil réussite: {t['seuil']})")
+                
+            print(f"\n  Invocation (Niveau 3) :")
+            print(f"  - {h['invocation']['nom']} | PV: {h['invocation']['pv']} | Dégâts: {h['invocation']['degats']}")
+            
+            input("\n[ Appuie sur Entrée pour revenir aux archives ]")
 
 
 def choisir_hero():
     os.system('cls' if os.name == 'nt' else 'clear')
-    print("Choisis ton héros :\n")
+    print("Choisis ton héros pour l'aventure :\n")
     print("1. Soundjata — Guerrier Mandingue (Tranchant)")
     print("2. Abla Pokou — Reine Baoulé (Magie)")
     print("3. Moro Naba — Chef Mossi (Feu)\n")
@@ -28,7 +69,6 @@ def choisir_hero():
 
 def afficher_etat(hero, monstre):
     os.system('cls' if os.name == 'nt' else 'clear')
-
     col = "\033[36m" if hero.eveil else "\033[34m"
 
     print(f"{col}{hero.nom:<12} {barre(hero.pv, hero.max_pv, col)}")
@@ -42,7 +82,6 @@ def combat(hero, monstre):
     cine_intro_niveau(monstre.niveau, monstre)
 
     while hero.pv > 0 and monstre.pv > 0:
-
         if hero.invocation:
             afficher_etat(hero, monstre)
             tour_invocation(hero, monstre)
@@ -109,7 +148,6 @@ def combat(hero, monstre):
 
     if hero.pv > 0:
         cine(f"{monstre.nom} vaincu !")
-
         if monstre.niveau < 5:
             hero.niveau += 1
             infos = hero.level_up()
@@ -120,10 +158,8 @@ def combat(hero, monstre):
 
 def jouer():
     hero = choisir_hero()
-
     for niv in range(1, 6):
         monstre = Monstre(MONSTRES[niv])
-
         hero.pv = hero.max_pv
         hero.invocation = None
         hero.invoc_tours = 0
@@ -140,15 +176,38 @@ def jouer():
         print("╔" + "═" * 40 + "╗")
         print("║           VICTOIRE FINALE !           ║")
         print("╚" + "═" * 40 + "╝\n")
-
         print("Après un combat titanesque, le héros terrasse Seth,")
         print("le Roi des Enfers, et met fin à son règne de chaos.")
         print("Les terres retrouvent enfin la paix, et ton nom")
         print("résonnera à jamais dans les légendes.\n")
-
         print("L’épopée s’achève… mais ton histoire ne fait que commencer.")
-        input("\n[ Entrée ]")
+        input("\n[ Appuie sur Entrée pour revenir au menu principal ]")
 
+def menu_principal():
+    """Le vrai point d'entrée du programme."""
+    while True:
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print("" * 21)
+        print(" LÉGENDES AFRICAINES : L'ÉPOPÉE ")
+        print("" * 21 + "\n")
+        
+        print("1.   Lancer l'Aventure")
+        print("2.   Consulter les Fiches des Héros")
+        print("3.   Quitter le jeu\n")
+        
+        choix = input("Que veux-tu faire ? (1/2/3) > ")
+        
+        if choix == "1":
+            jouer()
+        elif choix == "2":
+            afficher_fiches_heros()
+        elif choix == "3":
+            print("\nMerci d'avoir joué. À bientôt !")
+            break
 
+# C'est maintenant le menu_principal qui se lance au démarrage !
 if __name__ == "__main__":
-    jouer()
+    menu_principal()
+
+   
+   
